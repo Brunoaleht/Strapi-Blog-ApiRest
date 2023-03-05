@@ -1,0 +1,152 @@
+fragment img on UploadFile {
+  alternativeText
+  url
+}
+fragment author on AuthorEntity{
+  id
+  attributes{
+    displayName
+    slug
+  }
+}
+fragment category on CategoryEntity{
+  id
+  attributes{
+    displayName
+    slug
+  }
+}
+fragment tags on TagEntity{
+  id
+  attributes{
+    displayName
+    slug
+  }
+}
+fragment cover on Post{
+  cover{
+    coverData:data{
+      attributes{
+        ...img
+      }
+    }
+  }
+}
+fragment authorPost on Post {
+	author{
+    authorData: data{
+      ...author
+    }
+  }
+}
+fragment categoryPost on Post {
+  categories{
+    categoryData:data{
+      ...category
+    }
+  }
+}
+fragment tagsPost on Post {
+  tags{
+    tagsData: data{
+		...tags
+  	}
+  }
+}
+fragment menuLink on ComponentMenuMenuLink{
+  id
+  link
+  text
+  newTab
+}
+fragment settings on SettingEntityResponse{
+  settingData:data{
+      identificador: id
+      attributes{
+        blogName
+        blogDescription
+        textFooter
+        logo{
+          logoData:data{
+            attributes{
+              ...img
+            }
+          }
+        }
+        menuLink{
+					...menuLink
+        }
+      }
+    }
+}
+fragment posts on PostEntityResponseCollection{
+	postData: data{
+    id
+    attributes {
+      title
+      slug
+      ...cover
+      excerpt
+      content
+      allowComments
+     	...tagsPost
+      ...categoryPost
+      ...authorPost
+    }
+  }
+}
+
+
+query GET_ALL_POSTS{
+  setting{
+    ...settings
+  }
+  posts{
+    ...posts
+  }
+}
+query GET_POST_BY_SLUG($slug: StringFilterInput){
+  setting{
+    ...settings
+  }
+  posts(filters: {slug: $slug}){
+    ...posts
+  }
+}
+query GET_POSTS_BY_AUTHOR($authorSlug: StringFilterInput){
+  setting{
+    ...settings
+  }
+  posts(filters: {
+    author:{
+      slug: $authorSlug
+    }
+  }){
+    ...posts
+  }
+}
+query GET_POSTS_BY_CATEGORY($categorySlug: StringFilterInput){
+  setting{
+    ...settings
+  }
+  posts(filters: {
+    categories:{
+      slug: $categorySlug
+    }
+  }){
+    ...posts
+  }
+}
+query GET_POSTS_BY_TAG($tagsSlug: StringFilterInput){
+  setting{
+    ...settings
+  }
+  posts(filters: {
+    tags:{
+      slug: $tagsSlug
+    }
+  }){
+    ...posts
+  }
+}
+# where is the symbol "$", it is a variable or a let, which value comes from outside

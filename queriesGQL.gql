@@ -1,0 +1,79 @@
+fragment img on UploadFile {
+  alternativeText
+  url
+}
+fragment menuLink on ComponentMenuMenuLink{
+  id
+  link
+  text
+  newTab
+}
+fragment settings on SettingEntityResponse{
+  settingData:data{
+      identificador: id
+      attributes{
+        blogName
+        blogDescription
+        textFooter
+        logo{
+          logoData:data{
+            attributes{
+              ...img
+            }
+          }
+        }
+        menuLink{
+					...menuLink
+        }
+      }
+    }
+}
+fragment posts on PostEntityResponseCollection{
+      postsData:data{
+      id
+      attributes{
+        title
+      }
+    }
+}
+
+query GET_SETTINGS {
+  setting{
+    ...settings
+  }
+  posts{
+		...posts
+  }
+}
+query GET_POST_BY_SLUG($slug: StringFilterInput){
+  posts(filters: {slug: $slug}){
+    ...posts
+  }
+}
+query GET_POSTS_BY_AUTHOR($authorSlug: StringFilterInput){
+  posts(filters: {
+    author:{
+      slug: $authorSlug
+    }
+  }){
+    ...posts
+  }
+}
+query GET_POSTS_BY_CATEGORY($categorySlug: StringFilterInput){
+  posts(filters: {
+    categories:{
+      slug: $categorySlug
+    }
+  }){
+    ...posts
+  }
+}
+query GET_POSTS_BY_TAG($tagsSlug: StringFilterInput){
+  posts(filters: {
+    tags:{
+      slug: $tagsSlug
+    }
+  }){
+    ...posts
+  }
+}
